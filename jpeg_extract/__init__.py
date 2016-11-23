@@ -5,6 +5,9 @@ from swift.common.constraints import MAX_META_VALUE_LENGTH
 from swift.common.http import is_success
 from swift.common.utils import split_path, get_logger
 from swift.common.wsgi import WSGIContext, make_pre_authed_request
+from webob import Request
+from webob.exc import HTTPServerError
+
 
 class MetaExtractor(object):
     INIT_HEADER_SIZE = 12
@@ -31,16 +34,18 @@ class JPEGExtractMiddleware(WSGIContext):
         if env['REQUEST_METHOD'] != 'PUT':
             return self.app(env, start_response)
 
-        version, account, container, obj = split_path(env['PATH_INFO'], 1, 4, True)
-        if not obj or not obj.endswith('.jpg'):
+        version, account, container, obj = split_path(
+            env['PATH_INFO'], 1, 4, True)
+        if not obj and not (obj.lower().endswith('.jpg') or
+                            obj.lower().endswith('.jpeg')):
             return self.app(env, start_response)
 
         extractor = MetaExtractor(env['wsgi.input'])
         env['wsgi.input'] = extractor
         try:
             resp = self._app_call(env)
-        except Exception as e:
-            resp = HTTPServerError(request=req, body="error")
+        except Exception:
+            resp = HTTPServerError(request=Request(env), body="error")
             return resp(env, start_response)
         start_response(self._response_status, self._response_headers,
                        self._response_exc_info)
@@ -65,7 +70,8 @@ class JPEGExtractMiddleware(WSGIContext):
                                            headers=headers)
         post_resp = post_req.get_response(self.app)
         if not is_success(post_resp.status_int):
-            self.logger.info('POST with JPEG headers failed: ' + str(post_resp.body))
+            self.logger.info('POST with JPEG headers failed: ' +
+                             str(post_resp.body))
         return resp
 
 
