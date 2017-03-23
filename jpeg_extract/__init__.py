@@ -36,8 +36,10 @@ class JPEGExtractMiddleware(WSGIContext):
 
         version, account, container, obj = split_path(
             env['PATH_INFO'], 1, 4, True)
-        if not obj and not (obj.lower().endswith('.jpg') or
-                            obj.lower().endswith('.jpeg')):
+        if not obj:
+            return self.app(env, start_response)
+        if not obj.lower().endswith('.jpg') and\
+                not obj.lower().endswith('.jpeg'):
             return self.app(env, start_response)
 
         extractor = MetaExtractor(env['wsgi.input'])
