@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftimuralp%2Fswift-jpeg-meta.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftimuralp%2Fswift-jpeg-meta?ref=badge_shield)
+
 OpenStack Swift middleware to extract JPEG EXIF metadata
 ========================================================
 
@@ -119,3 +121,7 @@ time, but currently it is a string.
 The GPS coordinates could also make use of the Elasticsearch Geo Point type,
 however, currently the extracted metadata is only specified as the separate
 coordinates.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftimuralp%2Fswift-jpeg-meta.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftimuralp%2Fswift-jpeg-meta?ref=badge_large)
